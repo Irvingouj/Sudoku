@@ -17,6 +17,7 @@ public class MyFrame extends JFrame {
         sp=new SudokuPanel(s);
         bp=new ButtonPanel();
         bp.getSolve().addActionListener(new HandleSolve());
+        bp.getInputSudoku().addActionListener(new HandleInput());
 
         this.add(sp);
         this.add(bp);
@@ -26,6 +27,14 @@ public class MyFrame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
         this.setVisible(true);
+    }
+
+    private class HandleInput implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            sp.inputSuduko();
+            bp.getSolve().setEnabled(true);
+        }
     }
 
 
