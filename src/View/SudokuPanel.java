@@ -35,7 +35,7 @@ public class SudokuPanel extends JPanel implements ActionListener {
             sudokuTextArea.setLocation(((i%9)*32),((i/9)*32));
             this.add(sudokuTextArea);
         }
-        timer =new Timer(300,this);
+        timer =new Timer(50,this);
         timer.start();
         this.setLayout(null);
         this.setVisible(true);
@@ -66,7 +66,6 @@ public class SudokuPanel extends JPanel implements ActionListener {
 
     public void loadSudoku(Sudoku s){
         for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-//            sudokuTextAreas.get(i).setText(s.getAt(i));
             sudokuTextAreas.get(i).sudokuSetText(Integer.toString(s.getAt(i)));
         }
     }
@@ -81,6 +80,16 @@ public class SudokuPanel extends JPanel implements ActionListener {
             st.setText("");
             st.setBackground(Color.white);
         }
+    }
+
+    public void inputSuduko(){
+        int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
+        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
+            String inArea=sudokuTextAreas.get(i).getText();
+            board[i/Sudoku.SIZE][i%Sudoku.SIZE]=Integer.parseInt((inArea.equals("")?"0":inArea));
+        }
+        s=new Sudoku(board);
+        setSudoku(s);
     }
 
 
