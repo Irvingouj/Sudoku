@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class SudokuPanel extends JPanel implements ActionListener {
@@ -13,16 +15,57 @@ public class SudokuPanel extends JPanel implements ActionListener {
     Sudoku s;
     Timer timer;
 
+
     public SudokuPanel(Sudoku s){
         this();
         this.s=s;
         firstLoad();
     }
+    public SudokuPanel(Sudoku s,KeyListener k){
+        this();
+        this.s=s;
+        firstLoad(k);
+    }
+
+    private void firstLoad(KeyListener k){
+        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
+            sudokuTextAreas.get(i).setText(s.getAt(i));
+            sudokuTextAreas.get(i).addKeyListener(k);
+        }
+    }
 
     private void firstLoad() {
         for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
             sudokuTextAreas.get(i).setText(s.getAt(i));
+            sudokuTextAreas.get(i).addKeyListener(
+                    new KeyListener() {
+                        @Override
+                        public void keyTyped(KeyEvent e) {
+
+                        }
+
+                        @Override
+                        public void keyPressed(KeyEvent e) {
+
+                        }
+
+                        @Override
+                        public void keyReleased(KeyEvent e) {
+                        }
+                    }
+            );
         }
+    }
+
+    public boolean updateSudoku() {
+        int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
+        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
+            String inArea=sudokuTextAreas.get(i).getText();
+            board[i/Sudoku.SIZE][i%Sudoku.SIZE]=Integer.parseInt((inArea.equals("")?"0":inArea));
+        }
+        s=new Sudoku(board);
+
+        return s.validateBoard();
     }
 
 
@@ -36,7 +79,6 @@ public class SudokuPanel extends JPanel implements ActionListener {
             this.add(sudokuTextArea);
         }
         timer =new Timer(50,this);
-        timer.start();
         this.setLayout(null);
         this.setVisible(true);
     }
@@ -75,6 +117,7 @@ public class SudokuPanel extends JPanel implements ActionListener {
         loadSudoku(s);
     }
 
+
     private void clear() {
         for (SudokuTextArea st:sudokuTextAreas){
             st.setText("");
@@ -83,18 +126,23 @@ public class SudokuPanel extends JPanel implements ActionListener {
     }
 
     public void inputSuduko(){
-        int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            String inArea=sudokuTextAreas.get(i).getText();
-            board[i/Sudoku.SIZE][i%Sudoku.SIZE]=Integer.parseInt((inArea.equals("")?"0":inArea));
-        }
-        s=new Sudoku(board);
+        updateSudoku();
         setSudoku(s);
     }
 
 
     public void solve() {
+        System.out.println("s in solve is \n"+s);
         s.solve();
         timer.start();
+    }
+
+    public boolean isSolvoed() {
+        for (int i = 0; i <s.SIZE*s.SIZE ; i++) {
+            if(sudokuTextAreas.get(i).getText().equals("")){
+                return false;
+            }
+        }
+        return s.validateBoard();
     }
 }
