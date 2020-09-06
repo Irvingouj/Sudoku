@@ -9,7 +9,12 @@ import java.awt.*;
 
 public class tester {
     public static void main(String[] args) {
-        new MyFrame("test",new Sudoku());
+        Sudoku s=Sudoku.generatesRandomSudoku();
+        new MyFrame("test",s);
+
+//        System.out.println(s);
+//        s.solve();
+//        System.out.println(s);
 
 //        System.out.println(new String(new char[]{'a','b','c','d'},0,4));
     }

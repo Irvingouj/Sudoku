@@ -4,11 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 
 public class Sudoku implements ActionListener {
@@ -35,8 +31,95 @@ public class Sudoku implements ActionListener {
     public int getAt(int rowIdx,int colIdx){
         return board[rowIdx][colIdx];
     }
+    public void setAt(int idx,int value){setAt(idx/9,idx%9,value);}
     public void setAt(int rowIdx,int colIdx,int value){
         board[rowIdx][colIdx]=value;
+    }
+
+    private int getFirstZero(){
+        int count=0;
+        for (int i = 0; i <SIZE ; i++) {
+            for (int j = 0; j <SIZE ; j++) {
+                if(board[i][j]==0){
+                    return count;
+                }
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public void clearSolve(){
+        solvedSudoku.clear();
+    }
+
+    public Sudoku solve(Sudoku s){
+        Sudoku res=s.copy(s);
+        res.solve();
+        return res;
+    }
+
+
+    public void solve(){
+        try {
+            if(validateSudoku(this))throw new IOException("Invalid Sudoku");
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        try {
+
+            int idx = getFirstZero();
+            boolean res = solverHelper(idx / 9, idx % 9, this);
+
+            if (!res) {
+                throw new InputMismatchException();
+            }
+        }catch (InputMismatchException e){
+            System.out.println("not solvable");
+            e.printStackTrace();
+        }
+    }
+    private boolean solverHelper(int rowIdx, int cowIdx, Sudoku s) {
+        Sudoku tmp=copy(s);
+        solvedSudoku.add(tmp);
+
+        if(s.board[rowIdx][cowIdx]!=0){//if not zero,go to next zero
+            if(cowIdx<SIZE-1){
+                return solverHelper(rowIdx,cowIdx+1,s);
+            }
+            if(rowIdx<SIZE-1){
+                cowIdx=0;
+                return solverHelper(rowIdx+1,cowIdx,s);
+            }
+            return true;
+        }
+
+        for (int k = 1; k <10 ; k++) {
+            if(validateWithValue(rowIdx,cowIdx,k)){
+                s.board[rowIdx][cowIdx]=k;
+                if(solverHelper(rowIdx,cowIdx, s)){
+                    return true;
+                }
+                s.board[rowIdx][cowIdx]=0;
+
+            }
+        }
+
+        //went through 1 to 9 and always false
+        return false;
+    }
+
+    private Sudoku copy(Sudoku s) {
+        Sudoku res=new Sudoku();
+        for (int i = 0; i <SIZE; i++) {
+            for (int j = 0; j <SIZE ; j++) {
+                res.board[i][j]=s.getAt(i,j);
+            }
+        }
+        return res;
     }
 
     public static boolean validateSudoku(Sudoku s){
@@ -73,115 +156,76 @@ public class Sudoku implements ActionListener {
         return false;
     }
 
+    public static Sudoku generatesRandomSudoku(){
 
-    private int getFirstZero(){
-        int count=0;
-        for (int i = 0; i <SIZE ; i++) {
-            for (int j = 0; j <SIZE ; j++) {
-                if(board[i][j]==0){
-                    return count;
-                }
-                count++;
-            }
-        }
-        return count;
-    }
-
-
-
-    public void solve(){
-        try {
-            if(validateSudoku(this))throw new IOException("Invalid Sudoku");
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-
-        int idx=getFirstZero();
-        solverHelper(idx/9,idx%9,this);
-    }
-    private boolean solverHelper(int rowIdx, int cowIdx, Sudoku s) {
-        Sudoku tmp=copy(s);
-        solvedSudoku.add(tmp);
-
-        if(s.board[rowIdx][cowIdx]!=0){//if not zero,go to next zero
-            if(cowIdx<SIZE-1){
-                return solverHelper(rowIdx,cowIdx+1,s);
-            }
-            if(rowIdx<SIZE-1){
-                cowIdx=0;
-                return solverHelper(rowIdx+1,cowIdx,s);
-            }
-            return true;
-        }
-
-        for (int k = 1; k <10 ; k++) {
-            if(validateWithValue(rowIdx,cowIdx,k)){
-                s.board[rowIdx][cowIdx]=k;
-                if(solverHelper(rowIdx,cowIdx, s)){
-                    return true;
-                }
-                s.board[rowIdx][cowIdx]=0;
-
-            }
-        }
-        //went through 1 to 9 and always false
-        return false;
-    }
-
-    private Sudoku copy(Sudoku s) {
+        ArrayList<Integer> list;
+        Random r=new Random();
         Sudoku res=new Sudoku();
-        for (int i = 0; i <SIZE; i++) {
-            for (int j = 0; j <SIZE ; j++) {
-                res.board[i][j]=s.getAt(i,j);
+
+        list=newList();
+        for (int i = 0; i <SIZE*SIZE ; i++) {
+            if(r.nextInt(81)<11) {
+                while (list.size() > 0) {
+                    int idx = r.nextInt(list.size());
+                    if (res.validateWithValue(i / 9, i % 9, list.get(idx))) {
+                        res.setAt(i / 9, i % 9, list.get(idx));
+                        list.remove(idx);
+                        break;
+                    }
+                }
             }
         }
+        //by randomly putting a list of 1 to 9 randomly to the Sudoku, it is guaranteed that
+        //this Sudoku is solvable
+        res=res.solve(res);
+       //this function actually solve a problem and delete a few numbers in it to get a random Sudoku
+        //this way, we garnette its solvable
+        res.randomRowOperation();
+
+        for (int i = 0; i < SIZE*SIZE; i++) {
+            if(r.nextInt(100)<70){
+                res.setAt(i,0);
+            }
+        }
+
+        res.solvedSudoku.clear();
+
+
+
+
         return res;
     }
 
-    public void solveByStep(int step){
-        try {
-            if(validateSudoku(this))throw new IOException("Invalid Sudoku");
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+    private void randomRowOperation() {
+        Random r=new Random();
+        for (int i = 0; i <r.nextInt(71) ; i++) {
+            int choice=r.nextInt(4);
+            if (choice==1){
+                int[] tmp=board[0];
+                board[0]=board[2];
+                board[2]=tmp;
+            }
+            if(choice==2){
+                int[] tmp=board[3];
+                board[3]=board[5];
+                board[3]=tmp;
+            }
+            if(choice==3){
+                int[] tmp=board[6];
+                board[6]=board[8];
+                board[6]=tmp;
+            }
         }
-        int idx=getFirstZero();
-        int rowidx=idx/9,colidx=idx%9;
-        solverHelperBystep(rowidx,colidx,this,step);
     }
-    private boolean solverHelperBystep(int rowIdx, int cowIdx, Sudoku s,int steps) {
-        System.out.println(steps+" steps left");
-        if(steps==0){
-            return true;
-        }
 
-        steps--;
-        if(s.board[rowIdx][cowIdx]!=0){//if not zero,go to next zero
-            if(cowIdx<SIZE-1){
-                return solverHelperBystep(rowIdx,cowIdx+1,s,steps);
-            }
-            if(rowIdx<SIZE-1){
-                cowIdx=0;
-                return solverHelperBystep(rowIdx,cowIdx+1,s,steps);
-            }
-            return true;
+    private static ArrayList<Integer> newList() {
+        ArrayList<Integer> list=new ArrayList<>();
+        for (int i = 1; i < 10; i++) {
+            list.add(i);
         }
-
-        for (int k = 1; k <10 ; k++) {
-            if(validateWithValue(rowIdx,cowIdx,k)){
-                s.board[rowIdx][cowIdx]=k;
-                if(solverHelperBystep(rowIdx,cowIdx,s,steps)){
-                    return true;
-                }
-                s.board[rowIdx][cowIdx]=0;
-
-            }
-        }
-        //went through 1 to 9 and always false
-        return false;
+        return list;
     }
+
 
     public boolean validateWithValue(int rowIdx,int cowIdx,int value) {
         try {
@@ -226,33 +270,6 @@ public class Sudoku implements ActionListener {
         return new Sudoku(borad);
     }
 
-    public boolean validateSinglePosition(int rowIdx,int cowIdx){
-        if(board[rowIdx][cowIdx]==0)return true;
-        for (int i = 0; i <SIZE ; i++) {
-            if(board[rowIdx][i]==board[rowIdx][cowIdx]&&i!=cowIdx)
-                return false;
-        }
-        for (int i = 0; i <SIZE ; i++) {
-            if(board[i][cowIdx]==board[rowIdx][cowIdx]&&i!=rowIdx)
-                return false;
-        }
-
-        int initRowIdx=3*(rowIdx/3);
-        int initCowIdx=3*(cowIdx/3);
-        for (int i = initCowIdx; i <initCowIdx+3 ; i++) {
-            for (int j =initRowIdx ; j <initRowIdx+3 ; j++) {
-                if(board[j][i]==board[rowIdx][cowIdx]&&(j!=rowIdx&&i!=cowIdx)){
-                    return false;
-                }
-            }
-        }
-
-        return true;
-
-    }
-
-
-    
 
     @Override
     public String toString() {
@@ -283,5 +300,23 @@ public class Sudoku implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
 
+    }
+
+    //this might have problems
+    public boolean validateBoard() {
+        HashSet<String> seen=new HashSet<>();
+        for (int i = 0; i <SIZE ; i++) {
+            for (int j = 0; j <SIZE ; j++) {
+                if(board[i][j]!=0){
+                    String s="("+board[i][j]+")";
+                    if(!seen.add(s+"row"+i)
+                            ||!seen.add(s+"col"+j)
+                            ||!seen.add(s+"box"+i/3+""+j/3)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

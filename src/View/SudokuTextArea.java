@@ -98,7 +98,6 @@ class LimitNumDocument extends PlainDocument {
         }
         int originalLength = getLength();
         if (originalLength <= 0) {
-            System.out.println("originalLength="+originalLength);
             super.insertString(offs, str, attr);
             return;
         }
