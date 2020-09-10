@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactManager">
+    <artifact type="jar" name="Sukudo:jar">
+      <output-path>$PROJECT_DIR$/out/artifacts/Sukudo_jar</output-path>
+      <root id="archive" name="Sukudo.jar">
+        <element id="module-output" name="Sukudo" />
+      </root>
+    </artifact>
+  </component>
   <component name="InspectionProjectProfileManager">
     <profile version="1.0">
       <option name="myName" value="Project Default" />
@@ -11,7 +19,7 @@
       <module fileurl="file://$PROJECT_DIR$/Sukudo.iml" filepath="$PROJECT_DIR$/Sukudo.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" default="true" project-jdk-name="14.0.2" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">

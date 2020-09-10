@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.*;
 
 
-public class Sudoku implements ActionListener {
+public class Sudoku{
     public int[][] board;
     public final static int SIZE=9;
     public Queue<Sudoku> solvedSudoku=new LinkedList<>();
@@ -36,6 +36,17 @@ public class Sudoku implements ActionListener {
         board[rowIdx][colIdx]=value;
     }
 
+
+
+    public void clearSolve(){
+        solvedSudoku.clear();
+    }
+
+    public Sudoku solve(Sudoku s){
+        Sudoku res=s.copy(s);
+        res.solve();
+        return res;
+    }
     private int getFirstZero(){
         int count=0;
         for (int i = 0; i <SIZE ; i++) {
@@ -48,18 +59,6 @@ public class Sudoku implements ActionListener {
         }
         return count;
     }
-
-    public void clearSolve(){
-        solvedSudoku.clear();
-    }
-
-    public Sudoku solve(Sudoku s){
-        Sudoku res=s.copy(s);
-        res.solve();
-        return res;
-    }
-
-
     public void solve(){
         try {
             if(validateSudoku(this))throw new IOException("Invalid Sudoku");
@@ -111,7 +110,6 @@ public class Sudoku implements ActionListener {
         //went through 1 to 9 and always false
         return false;
     }
-
     private Sudoku copy(Sudoku s) {
         Sudoku res=new Sudoku();
         for (int i = 0; i <SIZE; i++) {
@@ -121,6 +119,9 @@ public class Sudoku implements ActionListener {
         }
         return res;
     }
+
+
+
 
     public static boolean validateSudoku(Sudoku s){
         for (int i = 0; i <SIZE ; i++) {
@@ -155,6 +156,8 @@ public class Sudoku implements ActionListener {
 
         return false;
     }
+
+
 
     public static Sudoku generatesRandomSudoku(){
 
@@ -195,7 +198,6 @@ public class Sudoku implements ActionListener {
 
         return res;
     }
-
     private void randomRowOperation() {
         Random r=new Random();
         for (int i = 0; i <r.nextInt(71) ; i++) {
@@ -217,7 +219,6 @@ public class Sudoku implements ActionListener {
             }
         }
     }
-
     private static ArrayList<Integer> newList() {
         ArrayList<Integer> list=new ArrayList<>();
         for (int i = 1; i < 10; i++) {
@@ -296,13 +297,6 @@ public class Sudoku implements ActionListener {
         return sb.toString();
     }
 
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    //this might have problems
     public boolean validateBoard() {
         HashSet<String> seen=new HashSet<>();
         for (int i = 0; i <SIZE ; i++) {
