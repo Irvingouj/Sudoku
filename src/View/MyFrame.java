@@ -8,23 +8,23 @@ import java.awt.event.*;
 import javax.swing.Timer;
 
 public class MyFrame extends JFrame {
-    SudokuPanel sp;
-    ButtonPanel bp;
-    InformationPanel ip;
+    SudokuPanel sudokuPanel;
+    ButtonPanel buttpnPanel;
+    InformationPanel infoPanel;
 
     public MyFrame(String title,Sudoku s) throws HeadlessException {
         super(title);
 
-        sp=new SudokuPanel(s,new HandleInputKey());
-        bp=new ButtonPanel();
-        ip=new InformationPanel();
-        sp.addKeyListener(new HandleInputKey());
-        bp.getSolve().addActionListener(new HandleSolve());
-        bp.getInputSudoku().addActionListener(new HandleInput());
+        sudokuPanel=new SudokuPanel(s,new HandleInputKey());
+        buttpnPanel=new ButtonPanel();
+        infoPanel=new InformationPanel();
+        sudokuPanel.addKeyListener(new HandleInputKey());
+        buttpnPanel.getSolve().addActionListener(new HandleSolve());
+        buttpnPanel.getInputSudoku().addActionListener(new HandleInput());
 
-        this.add(sp);
-        this.add(bp);
-        this.add(ip);
+        this.add(sudokuPanel);
+        this.add(buttpnPanel);
+        this.add(infoPanel);
 
         this.setBackground(Color.white);
         this.setSize(500,500);
@@ -33,7 +33,7 @@ public class MyFrame extends JFrame {
         this.setVisible(true);
     }
 
-    public class HandleInputKey implements KeyListener{
+    private class HandleInputKey implements KeyListener{
 
         @Override
         public void keyTyped(KeyEvent e) {
@@ -45,16 +45,18 @@ public class MyFrame extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            ip.setIsVaildSudoku(sp.updateSudoku());
-            ip.setIsSolvoed(sp.isSolvoed());
+            infoPanel.setIsVaildSudoku(sudokuPanel.updateSudoku());
+            infoPanel.setIsSolvoed(sudokuPanel.isSolvoed());
+
         }
     }
 
     private class HandleInput implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            sp.inputSuduko();
-            bp.getSolve().setEnabled(true);
+            sudokuPanel.inputSuduko();
+            buttpnPanel.getSolve().setEnabled(true);
+
         }
     }
 
@@ -63,9 +65,9 @@ public class MyFrame extends JFrame {
     private class HandleSolve implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            sp.solve();
-            bp.getSolve().setEnabled(false);
-
+            sudokuPanel.solve();
+            buttpnPanel.getSolve().setEnabled(false);
+            infoPanel.setIsSolvoed(true);
         }
     }
 

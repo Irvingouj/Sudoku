@@ -6,6 +6,7 @@ public class Controller {
     MyFrame mf;
 
     public Controller(){
-
+        s=Sudoku.generatesRandomSudoku();
+        mf=new MyFrame("Sudoku Game",s);
     }
 }
