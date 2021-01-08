@@ -9,4 +9,8 @@ public class Controller {
         s=Sudoku.generatesRandomSudoku();
         mf=new MyFrame("Sudoku Game",s);
     }
+
+    public static void main(String[] args) {
+        Controller c = new Controller();
+    }
 }

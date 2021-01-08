@@ -6,6 +6,7 @@ import java.awt.*;
 public class ButtonPanel extends JPanel {
     JButton solve;
     JButton inputSudoku;
+    JButton refresh;
 
 
     public ButtonPanel(){
@@ -22,6 +23,13 @@ public class ButtonPanel extends JPanel {
         inputSudoku.setBackground(Color.white);
         this.add(inputSudoku);
 
+        refresh = new JButton("refresh");
+        refresh.setBounds(50,190,100,50);
+        refresh.setBackground(Color.white);
+        this.add(refresh);
+
+
+
         this.setLayout(null);
         this.setVisible(true);
     }
@@ -29,4 +37,8 @@ public class ButtonPanel extends JPanel {
         return solve;
     }
     public JButton getInputSudoku(){return inputSudoku;}
+
+    public JButton getRefresh() {
+        return refresh;
+    }
 }

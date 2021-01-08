@@ -1,6 +1,8 @@
 package View;
 
 import Entity.Sudoku;
+
+import javax.naming.directory.InvalidAttributesException;
 import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
@@ -78,7 +80,7 @@ public class SudokuPanel extends JPanel implements ActionListener {
             sudokuTextArea.setLocation(((i%9)*32),((i/9)*32));
             this.add(sudokuTextArea);
         }
-        timer =new Timer(50,this);
+        timer =new Timer(1,this);
         this.setLayout(null);
         this.setVisible(true);
     }
@@ -131,14 +133,13 @@ public class SudokuPanel extends JPanel implements ActionListener {
     }
 
 
-    public void solve() {
-        System.out.println("s in solve is \n"+s);
+    public void solve() throws InvalidAttributesException {
         s.solve();
         timer.start();
     }
 
     public boolean isSolvoed() {
-        for (int i = 0; i <s.SIZE*s.SIZE ; i++) {
+        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
             if(sudokuTextAreas.get(i).getText().equals("")){
                 return false;
             }

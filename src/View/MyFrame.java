@@ -2,6 +2,7 @@ package View;
 
 import Entity.Sudoku;
 
+import javax.naming.directory.InvalidAttributesException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -18,9 +19,11 @@ public class MyFrame extends JFrame {
         sudokuPanel=new SudokuPanel(s,new HandleInputKey());
         buttpnPanel=new ButtonPanel();
         infoPanel=new InformationPanel();
+
         sudokuPanel.addKeyListener(new HandleInputKey());
         buttpnPanel.getSolve().addActionListener(new HandleSolve());
         buttpnPanel.getInputSudoku().addActionListener(new HandleInput());
+        buttpnPanel.getRefresh().addActionListener(new HandleRefresh());
 
         this.add(sudokuPanel);
         this.add(buttpnPanel);
@@ -45,8 +48,8 @@ public class MyFrame extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            infoPanel.setIsVaildSudoku(sudokuPanel.updateSudoku());
-            infoPanel.setIsSolvoed(sudokuPanel.isSolvoed());
+//            infoPanel.setIsVaildSudoku(sudokuPanel.updateSudoku());
+//            infoPanel.setIsSolvoed(sudokuPanel.isSolvoed());
 
         }
     }
@@ -65,9 +68,26 @@ public class MyFrame extends JFrame {
     private class HandleSolve implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            sudokuPanel.solve();
+            try {
+                sudokuPanel.solve();
+            }catch (InvalidAttributesException error){
+                infoPanel.displayInformation("this sudoku cannot be solved");
+                System.out.println("this is not a valid suduko");
+                return;
+            }
             buttpnPanel.getSolve().setEnabled(false);
-            infoPanel.setIsSolvoed(true);
+            infoPanel.displayInformation("solved");
+
+        }
+    }
+
+    private class HandleRefresh implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buttpnPanel.getSolve().setEnabled(true);
+            sudokuPanel.setSudoku(new Sudoku());
+            sudokuPanel.inputSuduko();
+            infoPanel.displayInformation("hello sudoku");
         }
     }
 

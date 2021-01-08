@@ -1,7 +1,7 @@
 package Entity;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
+import javax.naming.directory.InvalidAttributesException;
 import javax.swing.Timer;
 import java.io.IOException;
 import java.util.*;
@@ -42,44 +42,27 @@ public class Sudoku{
         solvedSudoku.clear();
     }
 
-    public Sudoku solve(Sudoku s){
-        Sudoku res=s.copy(s);
-        res.solve();
-        return res;
-    }
-    private int getFirstZero(){
-        int count=0;
-        for (int i = 0; i <SIZE ; i++) {
-            for (int j = 0; j <SIZE ; j++) {
-                if(board[i][j]==0){
-                    return count;
-                }
-                count++;
-            }
-        }
-        return count;
-    }
-    public void solve(){
-        try {
-            if(validateSudoku(this))throw new IOException("Invalid Sudoku");
-        }catch (IOException e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+    public void solve() throws InvalidAttributesException {
+//        try {
+            if(validateSudoku(this))throw new InvalidAttributesException("Invalid Sudoku");
+//        }catch (IOException e){
+//            System.out.println(e.getMessage());
+//            e.printStackTrace();
+//        }
 
 
-        try {
+//        try {
 
             int idx = getFirstZero();
             boolean res = solverHelper(idx / 9, idx % 9, this);
 
             if (!res) {
-                throw new InputMismatchException();
+                throw new InvalidAttributesException();
             }
-        }catch (InputMismatchException e){
-            System.out.println("not solvable");
-            e.printStackTrace();
-        }
+//        }catch (InputMismatchException e){
+//            System.out.println("not solvable");
+//            e.printStackTrace();
+//        }
     }
     private boolean solverHelper(int rowIdx, int cowIdx, Sudoku s) {
         Sudoku tmp=copy(s);
@@ -110,6 +93,25 @@ public class Sudoku{
         //went through 1 to 9 and always false
         return false;
     }
+
+    public static Sudoku solve(Sudoku s) throws InvalidAttributesException{
+        Sudoku res=s.copy(s);
+        res.solve();
+        return res;
+    }
+    private int getFirstZero(){
+        int count=0;
+        for (int i = 0; i <SIZE ; i++) {
+            for (int j = 0; j <SIZE ; j++) {
+                if(board[i][j]==0){
+                    return count;
+                }
+                count++;
+            }
+        }
+        return count;
+    }
+
     private Sudoku copy(Sudoku s) {
         Sudoku res=new Sudoku();
         for (int i = 0; i <SIZE; i++) {
@@ -159,7 +161,7 @@ public class Sudoku{
 
 
 
-    public static Sudoku generatesRandomSudoku(){
+    public static Sudoku generatesRandomSudoku() {
 
         ArrayList<Integer> list;
         Random r=new Random();
@@ -180,7 +182,12 @@ public class Sudoku{
         }
         //by randomly putting a list of 1 to 9 randomly to the Sudoku, it is guaranteed that
         //this Sudoku is solvable
-        res=res.solve(res);
+        try {
+            res= solve(res);
+        }catch (InvalidAttributesException ignored){
+
+        }
+
        //this function actually solve a problem and delete a few numbers in it to get a random Sudoku
         //this way, we garnette its solvable
         res.randomRowOperation();
@@ -257,7 +264,7 @@ public class Sudoku{
     }
 
     public static Sudoku initSudoku(){
-        int[][] borad=new int[][]{
+        int[][] board=new int[][]{
                 new int[]{7,0,0,4,0,0,1,2,0},
                 new int[]{6,0,0,0,7,5,0,0,9},
                 new int[]{0,0,0,6,0,1,0,7,8},
@@ -268,7 +275,7 @@ public class Sudoku{
                 new int[]{1,2,0,0,0,7,4,0,0},
                 new int[]{0,4,9,2,0,6,0,0,7},
         };
-        return new Sudoku(borad);
+        return new Sudoku(board);
     }
 
 
