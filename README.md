@@ -1,4 +1,4 @@
-#sudoku solver
+# sudoku solver
 This small program can solve a sudoku game
 it does the following
   - solve the sudoku
