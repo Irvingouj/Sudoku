@@ -1,4 +1,6 @@
-#sudoku 
-this program does the following things:
-1.generate a sudoku game<br/>
-2.solve the sudoku game<br/>
+#sudoku solver
+This small program can solve a sudoku game
+it does the following
+  - solve the sudoku
+  - validate the sudoku
+  - generate random sudoku that can be solved 
