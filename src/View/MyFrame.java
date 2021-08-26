@@ -48,8 +48,7 @@ public class MyFrame extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-//            infoPanel.setIsVaildSudoku(sudokuPanel.updateSudoku());
-//            infoPanel.setIsSolvoed(sudokuPanel.isSolvoed());
+
 
         }
     }

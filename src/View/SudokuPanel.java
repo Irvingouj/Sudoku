@@ -1,6 +1,7 @@
 package View;
 
 import Entity.Sudoku;
+import Interfaces.Observer;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.Timer;
@@ -12,17 +13,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class SudokuPanel extends JPanel implements ActionListener {
+public class SudokuPanel extends JPanel implements ActionListener, Observer {
     ArrayList<SudokuTextArea> sudokuTextAreas=new ArrayList<>();
     Sudoku s;
     Timer timer;
 
 
-    public SudokuPanel(Sudoku s){
-        this();
-        this.s=s;
-        firstLoad();
-    }
+//    public SudokuPanel(Sudoku s){
+//        this();
+//        this.s=s;
+//        firstLoad();
+//    }
     public SudokuPanel(Sudoku s,KeyListener k){
         this();
         this.s=s;
@@ -36,28 +37,28 @@ public class SudokuPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void firstLoad() {
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            sudokuTextAreas.get(i).setText(s.getAt(i));
-            sudokuTextAreas.get(i).addKeyListener(
-                    new KeyListener() {
-                        @Override
-                        public void keyTyped(KeyEvent e) {
-
-                        }
-
-                        @Override
-                        public void keyPressed(KeyEvent e) {
-
-                        }
-
-                        @Override
-                        public void keyReleased(KeyEvent e) {
-                        }
-                    }
-            );
-        }
-    }
+//    private void firstLoad() {
+//        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
+//            sudokuTextAreas.get(i).setText(s.getAt(i));
+//            sudokuTextAreas.get(i).addKeyListener(
+//                    new KeyListener() {
+//                        @Override
+//                        public void keyTyped(KeyEvent e) {
+//
+//                        }
+//
+//                        @Override
+//                        public void keyPressed(KeyEvent e) {
+//
+//                        }
+//
+//                        @Override
+//                        public void keyReleased(KeyEvent e) {
+//                        }
+//                    }
+//            );
+//        }
+//    }
 
     public boolean updateSudoku() {
         int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
@@ -134,16 +135,14 @@ public class SudokuPanel extends JPanel implements ActionListener {
 
 
     public void solve() throws InvalidAttributesException {
-        s.solve();
+        Sudoku.solve(s);
         timer.start();
     }
 
-    public boolean isSolvoed() {
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            if(sudokuTextAreas.get(i).getText().equals("")){
-                return false;
-            }
-        }
-        return s.validateBoard();
+
+
+    @Override
+    public void update() {
+
     }
 }
