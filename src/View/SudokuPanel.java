@@ -1,6 +1,8 @@
 package View;
 
 import Entity.Sudoku;
+import Entity.SudokuValidator;
+import Interfaces.Observer;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.swing.Timer;
@@ -12,64 +14,24 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class SudokuPanel extends JPanel implements ActionListener {
+public class SudokuPanel extends JPanel implements ActionListener, Observer {
     ArrayList<SudokuTextArea> sudokuTextAreas=new ArrayList<>();
     Sudoku s;
     Timer timer;
 
 
-    public SudokuPanel(Sudoku s){
+    public SudokuPanel(Sudoku s,KeyListener HandleInputKey){
         this();
         this.s=s;
-        firstLoad();
-    }
-    public SudokuPanel(Sudoku s,KeyListener k){
-        this();
-        this.s=s;
-        firstLoad(k);
+        firstLoad(HandleInputKey);
     }
 
-    private void firstLoad(KeyListener k){
+    private void firstLoad(KeyListener HandleInputKey){
         for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
             sudokuTextAreas.get(i).setText(s.getAt(i));
-            sudokuTextAreas.get(i).addKeyListener(k);
+            sudokuTextAreas.get(i).addKeyListener(HandleInputKey);
         }
     }
-
-    private void firstLoad() {
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            sudokuTextAreas.get(i).setText(s.getAt(i));
-            sudokuTextAreas.get(i).addKeyListener(
-                    new KeyListener() {
-                        @Override
-                        public void keyTyped(KeyEvent e) {
-
-                        }
-
-                        @Override
-                        public void keyPressed(KeyEvent e) {
-
-                        }
-
-                        @Override
-                        public void keyReleased(KeyEvent e) {
-                        }
-                    }
-            );
-        }
-    }
-
-    public boolean updateSudoku() {
-        int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            String inArea=sudokuTextAreas.get(i).getText();
-            board[i/Sudoku.SIZE][i%Sudoku.SIZE]=Integer.parseInt((inArea.equals("")?"0":inArea));
-        }
-        s=new Sudoku(board);
-
-        return s.validateBoard();
-    }
-
 
     private SudokuPanel() {
         this.setBackground(new Color(127, 162, 255));
@@ -85,12 +47,13 @@ public class SudokuPanel extends JPanel implements ActionListener {
         this.setVisible(true);
     }
 
+
     int count=0;
     @Override
     public void actionPerformed(ActionEvent e) {
         if(!s.solvedSudoku.isEmpty()) {
             Sudoku tmp = s.solvedSudoku.remove();
-            loadSudoku(tmp);
+            setTextfield(tmp);
             System.out.println(count++ + "\n" + tmp);
         }
     }
@@ -108,42 +71,46 @@ public class SudokuPanel extends JPanel implements ActionListener {
         g.setColor(Color.yellow);
     }
 
-    public void loadSudoku(Sudoku s){
+    public void setTextfield(Sudoku s){
         for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
             sudokuTextAreas.get(i).sudokuSetText(Integer.toString(s.getAt(i)));
         }
     }
 
     public void setSudoku(Sudoku s){
-        clear();
-        loadSudoku(s);
+        clearTextfield();
+        setTextfield(s);
     }
 
 
-    private void clear() {
+    private void clearTextfield() {
         for (SudokuTextArea st:sudokuTextAreas){
             st.setText("");
             st.setBackground(Color.white);
         }
     }
 
+    //set the sudoku board
     public void inputSuduko(){
-        updateSudoku();
-        setSudoku(s);
+
+        int[][] board=new int[Sudoku.SIZE][Sudoku.SIZE];
+        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
+            String inArea=sudokuTextAreas.get(i).getText();
+            board[i/Sudoku.SIZE][i%Sudoku.SIZE]=Integer.parseInt((inArea.equals("")?"0":inArea));
+        }
+        s=new Sudoku(board);
     }
 
 
     public void solve() throws InvalidAttributesException {
-        s.solve();
+        Sudoku.solve(s);
         timer.start();
     }
 
-    public boolean isSolvoed() {
-        for (int i = 0; i <Sudoku.SIZE*Sudoku.SIZE ; i++) {
-            if(sudokuTextAreas.get(i).getText().equals("")){
-                return false;
-            }
-        }
-        return s.validateBoard();
+
+
+    @Override
+    public void update() {
+        setSudoku(s);
     }
 }

@@ -77,7 +77,7 @@ public class SudokuTextArea extends JTextArea {
     }
 }
 
-//还没有十分明白为什么，先用着吧
+
 class LimitNumDocument extends PlainDocument {
     private int fLength; // 可任意输入
 
