@@ -36,6 +36,10 @@ public class MyFrame extends JFrame {
         this.setVisible(true);
     }
 
+    public JPanel getSudokuPanel(){
+        return this.sudokuPanel;
+    }
+
     private class HandleInputKey implements KeyListener{
 
         @Override
@@ -53,6 +57,7 @@ public class MyFrame extends JFrame {
         }
     }
 
+    // called when input button is pressed
     private class HandleInput implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

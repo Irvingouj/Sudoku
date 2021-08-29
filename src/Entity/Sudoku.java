@@ -26,7 +26,14 @@ public class Sudoku implements ObservedObject {
     }
 
     public Sudoku(int[][] board) {
-        this.board = board;
+        this(); // make sure the board is not null;
+
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                this.setAt(row,col,board[row][col]);
+            }
+        }
+
     }
 
     public int getAt(int idx){
